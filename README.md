@@ -1,16 +1,15 @@
 # Timetable Manager (Laravel)
 
-A simple school timetable management web app built with Laravel 12.
-Manage classes, subjects, teachers, rooms, and weekly lessons with automatic conflict detection.
+A simple school timetable web app built with Laravel 12. You manage classes, subjects, teachers and rooms, then lay out weekly lessons on a grid. If two lessons clash, the app tells you and refuses to save.
 
 ## Features
 
-- Weekly grid view per class (Mon–Sun)
-- Lesson CRUD with filters (class / teacher / day)
-- CRUD for Classes, Subjects, Teachers, Rooms
-- Conflict detection: blocks double-booking of the same teacher, room, or class on overlapping times
-- SQLite by default — no MySQL setup needed
-- Plain Blade + CSS — no Node/Vite build required
+- Weekly grid view per class (Monday to Sunday)
+- Lesson list with filters by class, teacher and day
+- Full CRUD for classes, subjects, teachers and rooms
+- Conflict detection: no double booking the same teacher, room or class in overlapping times
+- SQLite out of the box, so no MySQL setup needed
+- Plain Blade templates and CSS, no Node build step
 
 ## Tech Stack
 
@@ -46,7 +45,7 @@ php artisan serve
 ```
 app/Models/
   Teacher.php, Room.php, SchoolClass.php, Subject.php
-  TimetableEntry.php      # relations + findConflict() + DAYS constant
+  TimetableEntry.php      # relations plus findConflict() plus DAYS constant
 app/Http/Controllers/
   TeacherController.php, RoomController.php, SchoolClassController.php
   SubjectController.php, TimetableEntryController.php
@@ -57,7 +56,7 @@ database/migrations/
   2026_10_01_000004_create_subjects_table.php
   2026_10_01_000005_create_timetable_entries_table.php
 database/seeders/TimetableSeeder.php
-routes/web.php            # home grid + resource routes
+routes/web.php            # home grid plus resource routes
 resources/views/
   layout.blade.php
   timetable/grid|index|create|edit|form.blade.php
@@ -73,7 +72,7 @@ resources/views/
 - `timetable_entries(id, school_class_id, subject_id, teacher_id, room_id, day_of_week 1-7, start_time, end_time)`
 
 Conflict rule (`TimetableEntry::findConflict()`):
-same `day_of_week` + time overlap (`start < new_end AND end > new_start`) + same teacher OR same room OR same class → reject with message.
+same `day_of_week` with overlapping times (`start < new_end AND end > new_start`) and the same teacher, room or class means a conflict, and the save is rejected with a message saying what clashes.
 
 ## Routes
 
@@ -88,6 +87,6 @@ same `day_of_week` + time overlap (`start < new_end AND end > new_start`) + same
 
 ## Notes
 
-- Desktop app: Laravel is web-native. Run locally via `php artisan serve` and use in the browser. An installable desktop wrapper (Electron/Tauri) is out of scope for this repo.
-- The included `database/database.sqlite` contains demo data. Delete it and re-run `migrate + db:seed` for a fresh start. It is git-ignored by default Laravel `.gitignore` except as local dev artifact — remove from `.gitignore` if you want to version it.
-- Time format: `H:i` (e.g. `08:00`).
+- This is a web app. Run it locally with `php artisan serve` and use it in the browser.
+- Starting fresh: delete `database/database.sqlite` and re-run `migrate` plus `db:seed`.
+- Time format is `H:i` (for example `08:00`).
