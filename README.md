@@ -91,7 +91,3 @@ same `day_of_week` + time overlap (`start < new_end AND end > new_start`) + same
 - Desktop app: Laravel is web-native. Run locally via `php artisan serve` and use in the browser. An installable desktop wrapper (Electron/Tauri) is out of scope for this repo.
 - The included `database/database.sqlite` contains demo data. Delete it and re-run `migrate + db:seed` for a fresh start. It is git-ignored by default Laravel `.gitignore` except as local dev artifact — remove from `.gitignore` if you want to version it.
 - Time format: `H:i` (e.g. `08:00`).
-
-## License
-
-MIT (Laravel base) — see `composer.json`.
