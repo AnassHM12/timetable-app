@@ -1,6 +1,8 @@
-# Timetable Manager (Laravel)
+# Timetable Manager (Laravel + React)
 
 A simple school timetable web app built with Laravel 12. You manage classes, subjects, teachers and rooms, then lay out weekly lessons on a grid. If two lessons clash, the app tells you and refuses to save.
+
+The frontend is React through Inertia.js with Tailwind: a weekly grid with color coded subjects, a filterable lesson list, and plain forms for everything else.
 
 ## Features
 
@@ -9,14 +11,14 @@ A simple school timetable web app built with Laravel 12. You manage classes, sub
 - Full CRUD for classes, subjects, teachers and rooms
 - Conflict detection: no double booking the same teacher, room or class in overlapping times
 - SQLite out of the box, so no MySQL setup needed
-- Plain Blade templates and CSS, no Node build step
+- React frontend (Inertia.js + Tailwind), built with Vite
 
 ## Tech Stack
 
 - PHP 8.2+ (tested with XAMPP PHP 8.2.12)
 - Laravel 12
 - SQLite (file: `database/database.sqlite`)
-- Blade templates
+- React 19 + Inertia.js + Tailwind v4, built with Vite
 
 ## Quick Start
 
@@ -28,6 +30,8 @@ cd timetable-app
 
 # 2. Install dependencies (already done in this repo snapshot, but safe to re-run)
 composer install
+& "C:\Program Files\nodejs\npm.cmd" install
+& "C:\Program Files\nodejs\npm.cmd" run build
 cp .env.example .env   # if .env missing
 php artisan key:generate  # if APP_KEY empty
 
@@ -57,10 +61,10 @@ database/migrations/
   2026_10_01_000005_create_timetable_entries_table.php
 database/seeders/TimetableSeeder.php
 routes/web.php            # home grid plus resource routes
-resources/views/
-  layout.blade.php
-  timetable/grid|index|create|edit|form.blade.php
-  teachers|rooms|classes|subjects/{index,create,edit,form}.blade.php
+resources/js/app.jsx + Pages/{Grid,Lessons,LessonForm,Teachers,Rooms,Classes,Subjects,EntityForm}.jsx
+resources/js/Components/{Layout,Pager}.jsx
+resources/views/app.blade.php   # Inertia root
+tests/Feature/ExampleTest.php
 ```
 
 ## Data Model
@@ -90,3 +94,7 @@ same `day_of_week` with overlapping times (`start < new_end AND end > new_start`
 - This is a web app. Run it locally with `php artisan serve` and use it in the browser.
 - Starting fresh: delete `database/database.sqlite` and re-run `migrate` plus `db:seed`.
 - Time format is `H:i` (for example `08:00`).
+
+## License
+
+MIT (Laravel base). See `composer.json`.

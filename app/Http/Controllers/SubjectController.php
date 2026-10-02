@@ -4,18 +4,31 @@ namespace App\Http\Controllers;
 
 use App\Models\Subject;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class SubjectController extends Controller
 {
     public function index()
     {
-        $subjects = Subject::orderBy('name')->paginate(15);
-        return view('subjects.index', compact('subjects'));
+        $p = Subject::orderBy('name')->paginate(15);
+        return Inertia::render('Subjects', [
+            'subjects' => $p->items(),
+            'meta' => ['current_page' => $p->currentPage(), 'last_page' => $p->lastPage()],
+        ]);
     }
 
     public function create()
     {
-        return view('subjects.create');
+        return Inertia::render('EntityForm', [
+            'title' => 'Add subject',
+            'back' => route('subjects.index'),
+            'submitUrl' => route('subjects.store'),
+            'method' => 'post',
+            'fields' => [
+                ['name' => 'name', 'label' => 'Name'],
+                ['name' => 'code', 'label' => 'Code'],
+            ],
+        ]);
     }
 
     public function store(Request $request)
@@ -25,12 +38,22 @@ class SubjectController extends Controller
             'code' => 'nullable|string|max:50|unique:subjects,code',
         ]);
         Subject::create($data);
-        return redirect()->route('subjects.index')->with('success', 'Subject created.');
+        return redirect()->route('subjects.index')->with('success', 'Subject added.');
     }
 
     public function edit(Subject $subject)
     {
-        return view('subjects.edit', compact('subject'));
+        return Inertia::render('EntityForm', [
+            'title' => 'Edit subject',
+            'back' => route('subjects.index'),
+            'submitUrl' => route('subjects.update', $subject),
+            'method' => 'put',
+            'item' => $subject->only('name', 'code'),
+            'fields' => [
+                ['name' => 'name', 'label' => 'Name'],
+                ['name' => 'code', 'label' => 'Code'],
+            ],
+        ]);
     }
 
     public function update(Request $request, Subject $subject)

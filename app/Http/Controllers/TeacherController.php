@@ -4,18 +4,32 @@ namespace App\Http\Controllers;
 
 use App\Models\Teacher;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class TeacherController extends Controller
 {
     public function index()
     {
-        $teachers = Teacher::orderBy('name')->paginate(15);
-        return view('teachers.index', compact('teachers'));
+        $p = Teacher::orderBy('name')->paginate(15);
+        return Inertia::render('Teachers', [
+            'teachers' => $p->items(),
+            'meta' => ['current_page' => $p->currentPage(), 'last_page' => $p->lastPage()],
+        ]);
     }
 
     public function create()
     {
-        return view('teachers.create');
+        return Inertia::render('EntityForm', [
+            'title' => 'Add teacher',
+            'back' => route('teachers.index'),
+            'submitUrl' => route('teachers.store'),
+            'method' => 'post',
+            'fields' => [
+                ['name' => 'name', 'label' => 'Name'],
+                ['name' => 'email', 'label' => 'Email', 'type' => 'email'],
+                ['name' => 'phone', 'label' => 'Phone'],
+            ],
+        ]);
     }
 
     public function store(Request $request)
@@ -26,12 +40,23 @@ class TeacherController extends Controller
             'phone' => 'nullable|string|max:50',
         ]);
         Teacher::create($data);
-        return redirect()->route('teachers.index')->with('success', 'Teacher created.');
+        return redirect()->route('teachers.index')->with('success', 'Teacher added.');
     }
 
     public function edit(Teacher $teacher)
     {
-        return view('teachers.edit', compact('teacher'));
+        return Inertia::render('EntityForm', [
+            'title' => 'Edit teacher',
+            'back' => route('teachers.index'),
+            'submitUrl' => route('teachers.update', $teacher),
+            'method' => 'put',
+            'item' => $teacher->only('name', 'email', 'phone'),
+            'fields' => [
+                ['name' => 'name', 'label' => 'Name'],
+                ['name' => 'email', 'label' => 'Email', 'type' => 'email'],
+                ['name' => 'phone', 'label' => 'Phone'],
+            ],
+        ]);
     }
 
     public function update(Request $request, Teacher $teacher)
